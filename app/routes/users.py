@@ -1,15 +1,22 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.ext.asyncio import AsyncSession
 from app.schemas.user import UserSchema
+from app.models.user import User
+from app.database import get_db
+from sqlalchemy import select
 
 router = APIRouter()
 
-users = []
-
-@router.post("/", tags=["Users"], summary="Add new users")
-def add_user(user: UserSchema):
-    users.append(user)
+@router.post("/", tags=["Users"], summary="Add new user")
+async def add_user(user: UserSchema, db: AsyncSession = Depends(get_db)):
+    db_user = User(email=user.email, bio=user.bio)
+    db.add(db_user)
+    await db.commit()
+    await db.refresh(db_user)
     return {"ok": True, "message": "User added successfully"}
 
 @router.get("/", tags=["Users"], summary="Get all users")
-def get_users():
+async def get_users(db: AsyncSession = Depends(get_db)):
+    result = await db.execute(select(User))
+    users = result.scalars().all()
     return users

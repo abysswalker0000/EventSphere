@@ -1,37 +1,30 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.ext.asyncio import AsyncSession
 from app.schemas.event import NewEvent
+from app.models.event import Event
+from app.database import get_db
+from sqlalchemy import select
 
 router = APIRouter()
 
-events = [
-    {
-        "id": 1,
-        "title": "rave",
-        "author": "Bless",
-    },
-    {
-        "id": 2,
-        "title": "BBQ",
-        "author": "Jay-Z",
-    },
-]
-
 @router.get("/", tags=["Events"], summary="Get all events")
-def get_events():
+async def get_events(db: AsyncSession = Depends(get_db)):
+    result = await db.execute(select(Event))
+    events = result.scalars().all()
     return events
 
 @router.get("/{event_id}", tags=["Events"], summary="Get specific event")
-def get_event_by_id(event_id: int):
-    for event in events:
-        if event["id"] == event_id:
-            return event
-    raise HTTPException(status_code=404, detail="Event doesnt exist")
+async def get_event_by_id(event_id: int, db: AsyncSession = Depends(get_db)):
+    result = await db.execute(select(Event).filter(Event.id == event_id))
+    event = result.scalars().first()
+    if not event:
+        raise HTTPException(status_code=404, detail="Event doesn't exist")
+    return event
 
 @router.post("/", tags=["Events"])
-def create_event(new_event: NewEvent):
-    events.append({
-        "id": len(events) + 1,
-        "title": new_event.title,
-        "author": new_event.author, 
-    })
-    return {"succes": True, "message": "Event added successfully"}
+async def create_event(new_event: NewEvent, db: AsyncSession = Depends(get_db)):
+    db_event = Event(title=new_event.title, author_id=new_event.author_id, event_date = new_event.event_time )
+    db.add(db_event)
+    await db.commit()
+    await db.refresh(db_event)
+    return {"success": True, "message": "Event added successfully"}
