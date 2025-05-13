@@ -14,5 +14,7 @@ class Event(Base):
     description = Column(String, nullable=True)
     event_date = Column(DateTime, nullable=False, default=datetime.utcnow)
     created_at = Column(DateTime, default=datetime.utcnow)
+    category_id = Column(Integer, ForeignKey("category.id"), nullable=False)
 
     author = relationship("User", back_populates="events")
+    category = relationship("Category", back_populates="events")

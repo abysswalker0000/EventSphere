@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.schemas.event import NewEvent
+from app.schemas.event import EventSchema
 from app.models.event import Event
 from app.database import get_db
 from sqlalchemy import select
@@ -22,8 +22,8 @@ async def get_event_by_id(event_id: int, db: AsyncSession = Depends(get_db)):
     return event
 
 @router.post("/", tags=["Events"])
-async def create_event(new_event: NewEvent, db: AsyncSession = Depends(get_db)):
-    db_event = Event(title=new_event.title, author_id=new_event.author_id, event_date = new_event.event_time )
+async def create_event(new_event: EventSchema, db: AsyncSession = Depends(get_db)):
+    db_event = Event(title=new_event.title, author_id=new_event.author_id, event_date = new_event.event_time, category_id = new_event.category_id )
     db.add(db_event)
     await db.commit()
     await db.refresh(db_event)
