@@ -12,3 +12,4 @@ class User(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
 
     events = relationship("Event", back_populates="author")
+    participations = relationship("Participation", back_populates="user")
