@@ -1,4 +1,5 @@
 # EventSphere
+  EventSphere is a web application designed to facilitate event organization and participation. The platform allows users to create, manage, and attend events, with features like event recommendations based on past attendance, social interactions, and ticket sales.
 
 ## Schema
 ![Functional_scheme](https://github.com/user-attachments/assets/2346d012-2e8d-4346-acb7-413365259f2d)
@@ -66,15 +67,13 @@
 - User registration and authentication
 - Profile management (name, bio, photo, interests, event history, rating)
 - Event creation and management (title, description, date, location, category)
-- Event participation (join, RSVP, add to calendar)
+- Event Participation  (join, show interest, or ignore events)
 - Event discussions (chat or forum)
-- Personal calendar with external sync (Google Calendar, iCal)
-- Notifications (email, push, SMS) with customizable frequency
-- Advanced search (by category, date, location, keywords)
+- Notifications with customizable frequency
+- Advanced search (by category, date, location)
 - Event recommendations (based on interests, past events, friends)
 - Social features (friends, subscriptions to organizers)
 - Reviews and ratings for events and organizers
-- Location integration (maps for offline events, route planning)
 - Paid events (ticket sales, access control)
 - Event promotion for organizers
 - Analytics for organizers (participants, views, reviews)
