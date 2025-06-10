@@ -19,7 +19,7 @@ router = APIRouter(
     "/as_author",
     summary="Create a new review specifying the author"
 )
-async def create_review_as_author_user_style(
+async def create_review_as_author(
     new_review: ReviewCreateSchemaWithoutBinding,
     db: AsyncSession = Depends(get_db)
 ):
@@ -38,7 +38,7 @@ async def create_review_as_author_user_style(
     response_model=List[ReviewResponseSchema],
     summary="Get all reviews by a specific user"
 )
-async def get_reviews_by_user_user_style(user_id: int, db: AsyncSession = Depends(get_db)):
+async def get_reviews_by_user(user_id: int, db: AsyncSession = Depends(get_db)):
     result = await db.execute(
         select(Review).where(Review.author_id == user_id).order_by(Review.created_at.desc())
     )
@@ -50,7 +50,7 @@ async def get_reviews_by_user_user_style(user_id: int, db: AsyncSession = Depend
     response_model=List[ReviewResponseSchema],
     summary="Get all reviews for a specific event"
 )
-async def get_reviews_by_event_user_style(event_id: int, db: AsyncSession = Depends(get_db)):
+async def get_reviews_by_event(event_id: int, db: AsyncSession = Depends(get_db)):
     result = await db.execute(
         select(Review).where(Review.event_id == event_id).order_by(Review.created_at.desc())
     )
