@@ -13,3 +13,7 @@ class User(Base):
 
     events = relationship("Event", back_populates="author")
     participations = relationship("Participation", back_populates="user")
+    following_subscriptions = relationship("Subscription",foreign_keys="Subscription.follower_id", back_populates="follower" )
+    follower_subscriptions = relationship("Subscription",foreign_keys="Subscription.followee_id", back_populates="followee" )
+    comment_author = relationship("Comment", back_populates="author")
+    reviewer = relationship("Review", back_populates="reviewer")

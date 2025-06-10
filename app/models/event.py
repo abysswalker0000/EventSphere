@@ -19,3 +19,5 @@ class Event(Base):
     author = relationship("User", back_populates="events")
     category = relationship("Category", back_populates="events")
     participants = relationship("Participation", back_populates="event")
+    comment_event = relationship("Comment", back_populates="event")
+    review_event = relationship("Review", back_populates="event")
