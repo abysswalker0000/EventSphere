@@ -10,6 +10,9 @@ class CommentCreateSchemaAuthenticated(BaseModel):
     text: str
     event_id: int
 
+class CommentUpdateSchema(BaseModel):
+    text:str
+
 
 class CommentResponseSchema(BaseModel):
     id: int

@@ -1,6 +1,5 @@
 from pydantic import BaseModel
 from datetime import datetime
-from typing import Literal
 from enum import Enum
 
 class StatusVariation(str, Enum):
@@ -8,14 +7,40 @@ class StatusVariation(str, Enum):
     interested = "interested"
     not_going = "not going"
 
-class ParticipationCreateSchema(BaseModel):
+class ParticipationCreateExplicitSchema(BaseModel):
     user_id: int
     event_id: int
-    status: Literal["going", "interested", "not going"] = "not going"
+    status: StatusVariation = StatusVariation.interested
 
-class ParticipationSchema(BaseModel):
+class ParticipationSetStatusSchema(BaseModel):
+    status: StatusVariation
+
+class ParticipationResponseSchema(BaseModel):
     id: int
     user_id: int
     event_id: int
     joined_at: datetime
-    status: Literal["going", "interested", "not going"]
+    status: StatusVariation
+
+    class Config:
+        from_attributes = True
+
+class ParticipationWithUserInfoResponseSchema(BaseModel):
+    id: int
+    user_id: int 
+    event_id: int 
+    joined_at: datetime
+    status: StatusVariation
+
+    class Config:
+        from_attributes = True
+
+class ParticipationWithEventInfoResponseSchema(BaseModel):
+    id: int
+    user_id: int
+    event_id: int 
+    joined_at: datetime
+    status: StatusVariation
+
+    class Config:
+        from_attributes = True

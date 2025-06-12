@@ -20,3 +20,7 @@ class ReviewResponseSchema(BaseModel):
     comment: str
     rating: Annotated[int, Field(ge=1, le=5)]
     created_at: datetime
+
+class ReviewUpdateSchema(BaseModel):
+    comment:str
+    rating: Annotated[int, Field(ge=1, le=5)]

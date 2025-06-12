@@ -1,17 +1,21 @@
-from pydantic import BaseModel, Field
-from datetime import datetime
+from pydantic import BaseModel
 from decimal import Decimal
+from datetime import datetime
+from typing import Optional
 
 class TicketCreateSchema(BaseModel):
     user_id: int
     event_id: int
-    price: Decimal | None
+    price: Optional[Decimal] = None
 
-class TicketBaseSchema(BaseModel):
-    price: Decimal 
+
+class TicketUpdateSchema(BaseModel):
+    price: Optional[Decimal] = None
+
+
+class TicketResponseSchema(BaseModel):
+    id: int
     user_id: int
     event_id: int
-
-class TicketResponseSchema(TicketBaseSchema):
-    id: int
+    price: Optional[Decimal]
     purchased_at: datetime
