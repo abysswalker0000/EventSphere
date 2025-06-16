@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
 import uvicorn
-from app.routes import users, events, categories,participations,subscriptions,comments,reviews, tickets
+from app.routes import auth_router, users, events, categories,participations,subscriptions,comments,reviews, tickets
 from app.models import Base
 from app.database import engine
 import logging
@@ -24,6 +24,7 @@ app.include_router(subscriptions.router, tags=["Subscriptions"])
 app.include_router(comments.router, tags=["Comments"])
 app.include_router(reviews.router, tags=["Reviews"])
 app.include_router(tickets.router, tags=["Tickets"])
+app.include_router(auth_router.router, tags=["Authentication"])
 
 
 @app.get("/")

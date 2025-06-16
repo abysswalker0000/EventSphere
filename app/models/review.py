@@ -1,6 +1,6 @@
 from app.models import Base
 from sqlalchemy.orm import relationship
-from sqlalchemy import Column, Integer, ForeignKey, DateTime,String
+from sqlalchemy import Column, Integer, ForeignKey, DateTime,String, UniqueConstraint
 from datetime import datetime
 
 class Review(Base):
@@ -15,3 +15,7 @@ class Review(Base):
 
     reviewer = relationship("User", foreign_keys=[author_id], back_populates="reviewer")
     event = relationship("Event", foreign_keys=[event_id], back_populates="review_event")
+
+    __table_args__ = (
+    UniqueConstraint("author_id", "event_id", name="uq_user_event_review"),
+)
