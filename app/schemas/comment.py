@@ -1,25 +1,32 @@
 from pydantic import BaseModel, Field
 from datetime import datetime
-from typing import Optional
+from typing import Optional, List
+from app.schemas.user import UserMinimalResponseSchema
 
-class CommentCreateSchema(BaseModel):
-    text: str = Field(..., min_length=1, max_length=1000)
+class CommentBaseSchema(BaseModel):
+    text: str = Field(..., min_length=1, max_length=5000)
+
+class CommentCreateSchema(CommentBaseSchema):
     event_id: int 
+    parent_comment_id: Optional[int] = None 
 
-class CommentCreateSchemaWithoutBinding(BaseModel):
+class CommentCreateSchemaWithoutBinding(CommentBaseSchema):
     author_id: int
-    text: str = Field(..., min_length=1, max_length=1000)
     event_id: int
+    parent_comment_id: Optional[int] = None
 
 class CommentUpdateSchema(BaseModel):
-    text: Optional[str] = Field(default=None, min_length=1, max_length=1000)
+    text: Optional[str] = Field(default=None, min_length=1, max_length=5000)
 
-class CommentResponseSchema(BaseModel):
+class CommentResponseSchema(CommentBaseSchema):
     id: int
-    text: str
     created_at: datetime
     author_id: int 
+    author: Optional[UserMinimalResponseSchema] = None
     event_id: int  
+    parent_comment_id: Optional[int] = None
+    reply_count: int
+    replies: List["CommentResponseSchema"] = Field(default_factory=list)
 
     class Config:
         from_attributes = True

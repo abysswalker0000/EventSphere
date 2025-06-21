@@ -3,7 +3,7 @@ from sqlalchemy import select
 from typing import List, Optional
 
 from app.models.user import User
-from app.schemas.user import UserCreateSchema, UserUpdateSchema
+from app.schemas.user import UserCreateSchema, UserUpdateAdminSchema, UserProfileUpdateSchema
 from app.auth.schemas_auth import UserCreateAuthSchema 
 from app.auth.security import get_password_hash
 
@@ -51,7 +51,7 @@ async def register_new_user(db: AsyncSession, user_in: UserCreateAuthSchema) -> 
     await db.refresh(db_user)
     return db_user
 
-async def update_existing_user(db: AsyncSession, db_user: User, user_in: UserUpdateSchema) -> User:
+async def update_existing_user(db: AsyncSession, db_user: User, user_in: UserUpdateAdminSchema) -> User:
     update_data = user_in.model_dump(exclude_unset=True)
     for key, value in update_data.items():
         setattr(db_user, key, value)
@@ -64,3 +64,17 @@ async def delete_existing_user(db: AsyncSession, db_user: User) -> None:
     await db.delete(db_user)
     await db.commit()
     return None
+
+async def update_user_profile(db: AsyncSession, db_user: User, user_in: UserProfileUpdateSchema) -> User:
+    update_data = user_in.model_dump(exclude_unset=True)
+    for key, value in update_data.items():
+        setattr(db_user, key, value)
+    await db.commit()
+    await db.refresh(db_user)
+    return db_user
+
+async def update_user_password(db: AsyncSession, db_user: User, new_password: str) -> User:
+    db_user.hashed_password = get_password_hash(new_password)
+    await db.commit()
+    await db.refresh(db_user) 
+    return db_user

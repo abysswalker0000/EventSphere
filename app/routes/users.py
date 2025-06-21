@@ -3,11 +3,12 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy import select
 from typing import List, Optional
+from app.auth import security
 import logging
 
 from app.database import get_db
 from app.models.user import User
-from app.schemas.user import UserCreateSchema, UserResponseSchema, UserUpdateSchema
+from app.schemas.user import UserCreateSchema, UserResponseSchema, UserUpdateAdminSchema, UserProfileUpdateSchema, UserPasswordUpdateSchema
 from app.auth import user_crud 
 from app.auth.dependencies import get_current_active_user, get_current_admin_user
 
@@ -23,7 +24,7 @@ router = APIRouter(
     response_model=UserResponseSchema,
     status_code=status.HTTP_201_CREATED,
     summary="Create a new user (Admin operation)",
-    dependencies=[Depends(get_current_admin_user)]
+    # dependencies=[Depends(get_current_admin_user)]
 )
 async def create_user_by_admin_endpoint(
     user_data: UserCreateSchema,
@@ -115,13 +116,45 @@ async def get_user_by_id_endpoint(
     return user
 
 @router.patch(
+"/me",
+response_model=UserResponseSchema,
+summary="Update current authenticated user's profile"
+)
+async def update_my_profile(
+    user_update_data: UserProfileUpdateSchema, 
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_active_user)
+):
+    updated_user = await user_crud.update_user_profile(db=db, db_user=current_user, user_in=user_update_data)
+    logger.info(f"User ID {current_user.id} updated their profile.")
+    return updated_user
+
+@router.put( 
+    "/me/password",
+    summary="Update current authenticated user's password",
+    status_code=status.HTTP_204_NO_CONTENT
+)
+async def update_my_password(
+    password_data: UserPasswordUpdateSchema,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_active_user)
+):
+    if not security.verify_password(password_data.current_password, current_user.hashed_password):
+        logger.warning(f"User ID {current_user.id} failed password change: incorrect current password.")
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Incorrect current password.")
+    
+    await user_crud.update_user_password(db=db, db_user=current_user, new_password=password_data.new_password)
+    logger.info(f"User ID {current_user.id} successfully changed their password.")
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+@router.patch(
     "/{user_id}",
     response_model=UserResponseSchema,
     summary="Update a user (Admin or self)"
 )
 async def update_user_endpoint(
     user_id: int,
-    user_update_data: UserUpdateSchema,
+    user_update_data: UserUpdateAdminSchema,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_active_user)
 ):
@@ -229,3 +262,5 @@ async def delete_user_endpoint(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"An error occurred while deleting user {user_id}."
         )
+    
+
