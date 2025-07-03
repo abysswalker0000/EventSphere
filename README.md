@@ -65,15 +65,14 @@
 
 ## Functionality
 - User registration and authentication
-- Profile management (name, bio, photo, interests, event history, rating)
+- Profile management (name, bio, ticket history)
 - Event creation and management (title, description, date, location, category)
-- Event Participation  (join, show interest, or ignore events)
-- Event discussions (chat or forum)
-- Notifications with customizable frequency
-- Advanced search (by category, date, location)
+- Event Participation  (going, interested, not going)
+- Event discussions (forum)
+- Notifications
+- Advanced search
 - Event recommendations (based on interests, past events, friends)
-- Social features (friends, subscriptions to organizers)
-- Reviews and ratings for events and organizers
-- Paid events (ticket sales, access control)
-- Event promotion for organizers
-- Analytics for organizers (participants, views, reviews)
+- Social features (subscriptionss)
+- Reviews and ratings for events 
+- Paid events (ticket sales)
+- Analytics for organizers (participants, reviews)
